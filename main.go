@@ -22,7 +22,11 @@ func main() {
 	apiGroup := app.Group("/api")
 	v1Group := apiGroup.Group("/v1")
 	dictionaryGroup := v1Group.Group("/dictionary")
-	dictionaryGroup.Post("", dictionary.New)
+	dictionaryGroup.Get("", dictionary.GetDictionaries)
+	dictionaryGroup.Get(":id", dictionary.GetDictionary)
+	dictionaryGroup.Post("", dictionary.NewDictionary)
+	dictionaryGroup.Put(":id", dictionary.UpdateDictionary)
+	dictionaryGroup.Delete(":id", dictionary.DeleteDictionary)
 
 	port := os.Getenv("PORT")
 	app.Listen(":" + port)
