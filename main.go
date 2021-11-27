@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/programzheng/program-english/dictionary"
-	"github.com/programzheng/program-english/orm"
+	"github.com/programzheng/language-repository/dictionary"
+	"github.com/programzheng/language-repository/orm"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"

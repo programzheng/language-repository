@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/programzheng/program-english/orm"
+	"github.com/programzheng/language-repository/orm"
 	"gorm.io/gorm"
 )
 
