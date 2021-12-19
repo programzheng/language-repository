@@ -15,7 +15,7 @@ type Admin struct {
 	Password string `gorm:"size:255" json:"password"`
 }
 
-func setup() {
+func Setup() {
 	orm.SetupTableModel(&Admin{})
 }
 
@@ -28,8 +28,6 @@ func createHash(secret string) string {
 }
 
 func NewAdmin(c *fiber.Ctx) error {
-	setup()
-
 	admin := new(Admin)
 	if err := c.BodyParser(admin); err != nil {
 		return c.Status(fiber.StatusBadRequest).SendString(err.Error())

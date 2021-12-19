@@ -13,7 +13,7 @@ import (
 type Dictionary struct {
 	gorm.Model
 	UserID             uint               `json:"user_id"`
-	DictionaryLanguage DictionaryLanguage `json:"language" validate:"required"`
+	DictionaryLanguage DictionaryLanguage `json:"language"`
 }
 
 type DictionaryLanguage struct {
@@ -29,7 +29,7 @@ type ErrorResponse struct {
 	Value       string
 }
 
-func setup() {
+func Setup() {
 	orm.SetupTableModel(&Dictionary{})
 	orm.SetupTableModel(&DictionaryLanguage{})
 }
@@ -95,12 +95,12 @@ func GetDictionary(c *fiber.Ctx) error {
 }
 
 func NewDictionary(c *fiber.Ctx) error {
-	setup()
-
-	dictionary := new(Dictionary)
-	if err := c.BodyParser(dictionary); err != nil {
+	dictionaryLanguage := new(DictionaryLanguage)
+	if err := c.BodyParser(dictionaryLanguage); err != nil {
 		return c.Status(503).SendString(err.Error())
 	}
+	dictionary := new(Dictionary)
+	dictionary.DictionaryLanguage = *dictionaryLanguage
 
 	//validate the dictionary
 	errors := ValidateStruct(*dictionary)

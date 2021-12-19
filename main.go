@@ -13,6 +13,7 @@ import (
 	"github.com/programzheng/language-repository/user"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	jwtware "github.com/gofiber/jwt/v3"
@@ -24,6 +25,12 @@ var (
 	_, b, _, _ = runtime.Caller(0)
 	basepath   = filepath.Dir(b)
 )
+
+func autoMigrate() {
+	admin.Setup()
+	user.Setup()
+	dictionary.Setup()
+}
 
 func getLoggerFile() *os.File {
 	//log directory
@@ -58,7 +65,14 @@ func setFileLogger(file *os.File) fiber.Handler {
 func getCors() fiber.Handler {
 	return cors.New(cors.Config{
 		AllowOrigins: os.Getenv("CORS_ALLOW_ORIGINS"),
-		AllowHeaders: "Origin, Content-Type, Accept",
+	})
+}
+
+func adminBaseAuth() fiber.Handler {
+	return basicauth.New(basicauth.Config{
+		Users: map[string]string{
+			os.Getenv("ADMIN_BASE_AUTH_ACCOUNT"): os.Getenv("ADMIN_BASE_AUTH_PASSWORD"),
+		},
 	})
 }
 
@@ -76,6 +90,7 @@ func getUserJwtWare() fiber.Handler {
 
 func main() {
 	orm.InitDatabase()
+	autoMigrate()
 
 	engine := html.New("./dist", ".html")
 	app := fiber.New(fiber.Config{
@@ -101,7 +116,7 @@ func main() {
 
 	adminGroup := v1Group.Group("/admin")
 	adminGroup.Post("login", admin.Login)
-	adminGroup.Post("", admin.NewAdmin)
+	adminGroup.Use(adminBaseAuth()).Post("", admin.NewAdmin)
 
 	userGroup := v1Group.Group("/user")
 	userGroup.Post("login", user.Login)
