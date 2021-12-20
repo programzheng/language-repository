@@ -56,6 +56,18 @@ func Login(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"token": t})
 }
 
+func Auth(c *fiber.Ctx) error {
+	user := GetUserByJwtToken(c)
+	if user == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"status": "fail",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"status": "success",
+	})
+}
+
 func GetUserByJwtToken(c *fiber.Ctx) *User {
 	localsUser := c.Locals("user")
 	if localsUser == nil {
