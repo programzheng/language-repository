@@ -120,7 +120,10 @@ func NewDictionary(c *fiber.Ctx) error {
 		log.Fatal(result.Error)
 	}
 
-	return c.JSON(dictionary)
+	return c.JSON(fiber.Map{
+		"status":  "success",
+		"results": dictionary,
+	})
 }
 
 func UpdateDictionary(c *fiber.Ctx) error {
