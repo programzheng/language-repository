@@ -57,7 +57,7 @@ func getLoggerFile() *os.File {
 func setFileLogger(file *os.File) fiber.Handler {
 
 	return logger.New(logger.Config{
-		Format: "[${time}] - ${latency} - ${ip} - ${status} - [${method}] ${path}\n${body}\n",
+		Format: "[${time}] - ${latency} - ${ip} - ${status} - [${method}] ${path}\nheader Authorization:${reqHeader:Authorization}\n${body}\n",
 		Output: file,
 	})
 }
