@@ -116,12 +116,12 @@ func main() {
 
 	adminGroup := v1Group.Group("/admin")
 	adminGroup.Post("login", admin.Login)
-	adminGroup.Use(adminBaseAuth()).Post("", admin.NewAdmin)
+	adminGroup.Post("", adminBaseAuth(), admin.NewAdmin)
 
 	userGroup := v1Group.Group("/user")
 	userGroup.Post("login", user.Login)
-	userGroup.Use(getUserJwtWare()).Post("auth", user.Auth)
-	userGroup.Use(getAdminJwtWare()).Post("", user.NewUser)
+	userGroup.Post("auth", getUserJwtWare(), user.Auth)
+	userGroup.Post("", getAdminJwtWare(), user.NewUser)
 
 	dictionaryGroup := v1Group.Group("/dictionary")
 	dictionaryGroup.Use(getUserJwtWare())
