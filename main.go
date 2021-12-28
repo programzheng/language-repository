@@ -108,6 +108,10 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{
 			"Title": "Hello, World!",
+			"Data": fiber.Map{
+				"Test1": "Foo",
+				"Test2": "Bar",
+			},
 		})
 	})
 
