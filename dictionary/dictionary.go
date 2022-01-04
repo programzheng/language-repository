@@ -130,8 +130,10 @@ func UpdateDictionary(c *fiber.Ctx) error {
 	id := c.Params("id")
 
 	dictionary := new(Dictionary)
-	tx := defaultWhere(c, orm.GetDB())
-	tx.Find(&dictionary, id)
+	tx := defaultWhere(c, orm.GetDB()).Joins("DictionaryLanguage")
+
+	tx.Find(dictionary, id)
+
 	if dictionary.ID == 0 {
 		return c.Status(500).SendString("No Found with ID")
 	}
@@ -140,12 +142,19 @@ func UpdateDictionary(c *fiber.Ctx) error {
 		return c.Status(503).SendString(err.Error())
 	}
 
-	result := orm.GetDB().Save(&dictionary)
+	if err := c.BodyParser(&dictionary.DictionaryLanguage); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+
+	result := orm.GetDB().Session(&gorm.Session{FullSaveAssociations: true}).Updates(&dictionary)
 	if result.Error != nil {
 		log.Fatal(result.Error)
 	}
 
-	return c.JSON(dictionary)
+	return c.JSON(fiber.Map{
+		"status":  "success",
+		"results": dictionary,
+	})
 }
 
 func DeleteDictionary(c *fiber.Ctx) error {
