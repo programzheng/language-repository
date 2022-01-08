@@ -39,7 +39,7 @@ func GetDB() *gorm.DB {
 
 func SetupTableModel(models ...interface{}) error {
 	//env is development
-	if os.Getenv("ENV") == "development" {
+	if os.Getenv("APP_ENV") == "development" {
 		err := GetDB().AutoMigrate(models...)
 		if err != nil {
 			log.Fatal(err)
