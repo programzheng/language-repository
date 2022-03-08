@@ -136,8 +136,6 @@ func main() {
 	dictionaryGroup.Delete(":id", dictionary.DeleteDictionary)
 
 	port := os.Getenv("PORT")
-	if port == "" {
-		port = os.Getenv("APP_PORT")
-	}
+
 	app.Listen(":" + port)
 }

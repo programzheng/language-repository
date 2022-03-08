@@ -10,7 +10,7 @@ services:
       env_file:
         - .env
       ports:
-        - ${LOCAL_PORT}:${APP_PORT}
+        - ${PORT}:${PORT}
       networks:
         - backend
 
