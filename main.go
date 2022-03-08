@@ -106,13 +106,7 @@ func main() {
 	app.Use(getCors())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{
-			"Title": "Hello, World!",
-			"Data": fiber.Map{
-				"Test1": "Foo",
-				"Test2": "Bar",
-			},
-		})
+		return c.Status(fiber.StatusNotFound).SendString("Not Found!")
 	})
 
 	apiGroup := app.Group("/api")
