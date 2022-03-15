@@ -106,7 +106,7 @@ func main() {
 	app.Use(getCors())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusNotFound).SendString("Not Found!")
+		return c.Status(fiber.StatusOK).SendString("ok")
 	})
 
 	apiGroup := app.Group("/api")
