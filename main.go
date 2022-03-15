@@ -90,7 +90,7 @@ func getUserJwtWare() fiber.Handler {
 
 func main() {
 	orm.InitDatabase()
-	autoMigrate()
+	go autoMigrate()
 
 	engine := html.New("./dist", ".html")
 	app := fiber.New(fiber.Config{
