@@ -10,6 +10,23 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func generateJwt(u *User) (string, error) {
+	// Create the Claims
+	claims := jwt.MapClaims{
+		"account": u.Account,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	}
+	// Create token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// Generate encoded token and send it as response.
+	t, err := token.SignedString([]byte(os.Getenv("JWT_USER_SECRET")))
+	if err != nil {
+		return "", err
+	}
+
+	return t, nil
+}
+
 func checkHash(hash string, secret string) error {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(secret))
 	return err
@@ -39,18 +56,11 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	//jwt
-	// Create the Claims
-	claims := jwt.MapClaims{
-		"account": user.Account,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	}
-	// Create token
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// Generate encoded token and send it as response.
-	t, err := token.SignedString([]byte(os.Getenv("JWT_USER_SECRET")))
+	t, err := generateJwt(user)
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	return c.JSON(fiber.Map{"token": t})

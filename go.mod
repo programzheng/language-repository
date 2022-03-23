@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/go-playground/validator/v10 v10.10.1
+	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/gofiber/fiber/v2 v2.29.0
 	github.com/gofiber/jwt/v3 v3.2.8
 	github.com/gofiber/template v1.6.25

@@ -1,8 +1,11 @@
 package user
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/programzheng/language-repository/orm"
@@ -15,17 +18,26 @@ type User struct {
 	Account          string      `gorm:"size:255; unique"`
 	Password         string      `gorm:"size:255" json:"password"`
 	UserProfile      UserProfile `json:"profile"`
+	UserBindProvider []UserBindProvider
 }
 
 type UserProfile struct {
 	gorm.Model
-	UserID uint   `json:"user_id"`
-	Email  string `gorm:"size:255" json:"email" validate:"email"`
+	UserID uint    `json:"user_id"`
+	Email  *string `json:"email" validate:"email"`
+}
+
+type UserBindProvider struct {
+	gorm.Model
+	Provider         string
+	UserID           uint
+	ProviderUniqueID string
 }
 
 func Setup() {
 	orm.SetupTableModel(&User{})
 	orm.SetupTableModel(&UserProfile{})
+	orm.SetupTableModel(&UserBindProvider{})
 }
 
 func createHash(secret string) string {
@@ -36,11 +48,16 @@ func createHash(secret string) string {
 	return string(hash)
 }
 
+func createMD5(s string) string {
+	hash := md5.Sum([]byte(s))
+	return hex.EncodeToString(hash[:])
+}
+
 func setAccount(user *User) *User {
 	accountType := os.Getenv("USER_ACCOUNT_TYPE")
 	switch accountType {
 	case "email":
-		user.Account = user.UserProfile.Email
+		user.Account = *user.UserProfile.Email
 	}
 
 	return user
@@ -87,4 +104,53 @@ func NewUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(user)
+}
+
+func GetUserByProvider(provider string, providerUniqueID string) (*User, error) {
+	ubp := UserBindProvider{
+		Provider:         provider,
+		ProviderUniqueID: providerUniqueID,
+	}
+	result := orm.GetDB().Find(&ubp)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	u := User{}
+	result = orm.GetDB().Find(&u, ubp.UserID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &u, nil
+}
+
+func NewOauthUser(provider string, uniqueID string) (*User, error) {
+	key := provider + "-" + uniqueID
+	account := createMD5(key)
+	t := time.Now()
+	password := createHash(createMD5(key + "-" + t.String()))
+
+	u := User{
+		Account:  account,
+		Password: password,
+		UserBindProvider: []UserBindProvider{{
+			Provider:         provider,
+			ProviderUniqueID: uniqueID,
+		}},
+	}
+
+	result := orm.GetDB().Create(&u)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	u.UserProfile.UserID = u.ID
+	u.UserProfile.Email = nil
+	result = orm.GetDB().Create(&u.UserProfile)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &u, nil
 }

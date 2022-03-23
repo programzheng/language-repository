@@ -120,6 +120,9 @@ func main() {
 	userGroup.Post("login", user.Login)
 	userGroup.Post("auth", getUserJwtWare(), user.Auth)
 	userGroup.Post("", getAdminJwtWare(), user.NewUser)
+	
+	userGoogleGroup := userGroup.Group("/google")
+	userGoogleGroup.Post("oauth", user.GoogleOauth)
 
 	dictionaryGroup := v1Group.Group("/dictionary")
 	dictionaryGroup.Use(getUserJwtWare())
