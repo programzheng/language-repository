@@ -12,9 +12,9 @@ import (
 
 type User struct {
 	gorm.Model
-	Account     string      `gorm:"size:255; unique"`
-	Password    string      `gorm:"size:255" json:"password"`
-	UserProfile UserProfile `json:"profile"`
+	Account          string      `gorm:"size:255; unique"`
+	Password         string      `gorm:"size:255" json:"password"`
+	UserProfile      UserProfile `json:"profile"`
 }
 
 type UserProfile struct {

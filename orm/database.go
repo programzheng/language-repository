@@ -16,17 +16,18 @@ var (
 
 func InitDatabase() {
 	var err error
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&loc=Local&parseTime=true",
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
-		os.Getenv("DB_DATABASE"),
-	)
-	fmt.Printf("database connection setting: %s\n", dsn)
+		os.Getenv("DB_DATABASE"))
 
-	globalDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	fmt.Printf("connect: %v database\n", dsn)
+	globalDB, err = gorm.Open(mysql.New(mysql.Config{
+		DSN:               dsn,
+		DefaultStringSize: 256, // default size for string fields
+	}), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
