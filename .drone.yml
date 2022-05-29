@@ -12,7 +12,6 @@ steps:
     image: golang:1.16
     commands:
     - make build
-    - ./release/linux/amd64/language-repository -h
     
   - name: docker-linux-amd64
     image: plugins/docker
