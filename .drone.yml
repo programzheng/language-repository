@@ -6,8 +6,7 @@ steps:
   - name: push-linux-amd64-image
     image: plugins/docker
     settings:
-      registry: registry.hub.docker.com
-      repo: registry.hub.docker.com/repository/docker/programzheng/language-repository
+      repo: programzheng/language-repository
       dockerfile: Dockerfile
       username:
         from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
