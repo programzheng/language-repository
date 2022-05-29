@@ -17,8 +17,6 @@ steps:
     settings:
       registry: programzheng/language-repository:latest
       repo: hub.docker.com/repository/docker/programzheng/language-repository
-      auto_tag: true
-      auto_tag_suffix: linux_amd64
       username: programzheng
       password:
         - from_secret: docker_linux_amd64_password
