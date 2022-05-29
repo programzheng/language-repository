@@ -16,10 +16,8 @@ steps:
   - name: docker-linux-amd64
     image: plugins/docker
     settings:
-      registry:
-        - from_secret: docker_linux_amd64_registry
-      repo:
-        - from_secret: docker_linux_amd64_repo
+      registry: programzheng/language-repository:latest
+      repo: hub.docker.com/repository/docker/programzheng/language-repository
       auto_tag: true
       auto_tag_suffix: linux_amd64
       username:
