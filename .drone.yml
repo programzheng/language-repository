@@ -15,7 +15,7 @@ steps:
   - name: push-linux-amd64-image
     image: plugins/docker
     settings:
-      registry: programzheng/language-repository:latest
+      registry: registry.hub.docker.com
       repo: hub.docker.com/repository/docker/programzheng/language-repository
       username: programzheng
       password:
