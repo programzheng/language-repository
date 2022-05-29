@@ -2,14 +2,13 @@ kind: pipeline
 type: docker
 name: linux_amd64
 
-environment:
-  GOOS: linux
-  GOARCH: amd64
-  CGO_ENABLED: 0
-
 steps:
   - name: build-linux-amd64
     image: golang:1.16
+    environment:
+      GOOS: linux
+      GOARCH: amd64
+      CGO_ENABLED: 0
     commands:
     - make build
     
@@ -20,7 +19,6 @@ steps:
       repo: hub.docker.com/repository/docker/programzheng/language-repository
       auto_tag: true
       auto_tag_suffix: linux_amd64
-      username:
-        - from_secret: docker_linux_amd64_username
+      username: programzheng
       passwords:
         - from_secret: docker_linux_amd64_password
