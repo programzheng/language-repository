@@ -12,7 +12,7 @@ steps:
     commands:
     - make build
     
-  - name: docker-linux-amd64
+  - name: push-linux-amd64-image
     image: plugins/docker
     settings:
       registry: programzheng/language-repository:latest
