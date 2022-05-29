@@ -19,4 +19,4 @@ steps:
       repo: hub.docker.com/repository/docker/programzheng/language-repository
       username: programzheng
       password:
-        - from_secret: docker_linux_amd64_password
+        - from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
