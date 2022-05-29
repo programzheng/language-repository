@@ -17,6 +17,9 @@ steps:
     settings:
       registry: registry.hub.docker.com
       repo: hub.docker.com/repository/docker/programzheng/language-repository
+      tags:
+        - feature-drone
+        - main
       username: programzheng
       password:
         from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
