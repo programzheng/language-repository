@@ -45,3 +45,7 @@ down:
 #移除多餘的image
 prune:
 	docker system prune
+
+#編譯binary	
+build:
+	go build -v -a -o release/${GOOS}/${GOARCH}/language-repository

@@ -1,10 +1,29 @@
 kind: pipeline
 type: docker
-name: default
+name: linux_amd64
+
+environment:
+  GOOS: linux
+  GOARCH: amd64
+  CGO_ENABLED: 0
 
 steps:
-- name: test
-  image: golang:1.16
-  commands:
-  - go test
-  - go build
+  - name: build-linux-amd64
+    image: golang:1.16
+    commands:
+    - make build
+    - ./release/linux/amd64/language-repository -h
+    
+  - name: docker-linux-amd64
+    image: plugins/docker
+    settings:
+      registry:
+        - from_secret: docker_linux_amd64_registry
+      repo:
+        - from_secret: docker_linux_amd64_repo
+      auto_tag: true
+      auto_tag_suffix: linux_amd64
+      username:
+        - from_secret: docker_linux_amd64_username
+      passwords:
+        - from_secret: docker_linux_amd64_password
