@@ -20,5 +20,5 @@ steps:
       auto_tag: true
       auto_tag_suffix: linux_amd64
       username: programzheng
-      passwords:
+      password:
         - from_secret: docker_linux_amd64_password
