@@ -1,49 +1,28 @@
-# kind: pipeline
-# type: docker
-# name: linux_amd64
-
-# steps:    
-#   - name: push-linux-amd64-image
-#     image: plugins/docker
-#     settings:
-#       repo: programzheng/language-repository
-#       dockerfile: Dockerfile
-#       username:
-#         from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
-#       password:
-#         from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
-
-  # - name: ssh-remote-host-by-drone-ssh
-  #   image: appleboy/drone-ssh
-  #   settings:
-  #     debug: true
-  #     host:
-  #       from_secret: SSH_REMOTE_HOST
-  #     username:
-  #       from_secret: SSH_REMOTE_USERNAME
-  #     key:
-  #       from_secret: SSH_REMOTE_KEY
-  #     port:
-  #       from_secret: SSH_REMOTE_PORT
-  #     script:
-  #       - cat /root/drone_rsa
-# ---
 kind: pipeline
-type: ssh
+type: docker
 name: linux_amd64
 
-server:
-  host:
-    from_secret: SSH_REMOTE_HOST
-  user:
-    from_secret: SSH_REMOTE_USERNAME
-  ssh_key:
-    from_secret: SSH_REMOTE_KEY
+steps:    
+  - name: push-linux-amd64-image
+    image: plugins/docker
+    settings:
+      repo: programzheng/language-repository
+      dockerfile: Dockerfile
+      username:
+        from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
+      password:
+        from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
 
-clone:
-  disable: true
-
-steps:
-  - name: ssh-remote-host
-    commands:
-      - ls
+  - name: ssh-remote-host-by-drone-ssh
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: SSH_REMOTE_HOST
+      username:
+        from_secret: SSH_REMOTE_USERNAME
+      key:
+        from_secret: SSH_REMOTE_KEY
+      port:
+        from_secret: SSH_REMOTE_PORT
+      script:
+        - cat /root/drone_rsa
