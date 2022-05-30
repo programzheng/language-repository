@@ -1,17 +1,17 @@
-kind: pipeline
-type: docker
-name: linux_amd64
+# kind: pipeline
+# type: docker
+# name: linux_amd64
 
-steps:    
-  - name: push-linux-amd64-image
-    image: plugins/docker
-    settings:
-      repo: programzheng/language-repository
-      dockerfile: Dockerfile
-      username:
-        from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
-      password:
-        from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
+# steps:    
+#   - name: push-linux-amd64-image
+#     image: plugins/docker
+#     settings:
+#       repo: programzheng/language-repository
+#       dockerfile: Dockerfile
+#       username:
+#         from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
+#       password:
+#         from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
 
   # - name: ssh-remote-host-by-drone-ssh
   #   image: appleboy/drone-ssh
