@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+    #api
+    language-repository-api:
+      image: programzheng/language-repository:latest
+      restart: always
+      env_file:
+        - .env
+      networks:
+        - backend
+
+networks:
+  backend:
+    external: true

@@ -45,3 +45,7 @@ prune:
 #編譯binary	
 build:
 	go build -v -a -o release/${GOOS}/${GOARCH}/language-repository
+
+#drone exec
+drone-exec:
+	drone exec --secret-file drone.secrets

@@ -1,19 +1,35 @@
 kind: pipeline
 type: docker
-name: linux_amd64
+name: default
 
 steps:    
   - name: push-linux-amd64-image
     image: plugins/docker
     settings:
-      repo: programzheng/language-repository
+      repo: programzheng/${DRONE_REPO_NAME}
       dockerfile: Dockerfile
       username:
         from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
       password:
         from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
 
-  - name: ssh-remote-host-by-drone-ssh
+  - name: scp-remote-host
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: SSH_REMOTE_HOST
+      username:
+        from_secret: SSH_REMOTE_USERNAME
+      key:
+        from_secret: SSH_REMOTE_KEY
+      port:
+        from_secret: SSH_REMOTE_PORT
+      overwrite: true
+      target: ~/projects/language-repository
+      source:
+        - docker-compose-remote.yml
+
+  - name: ssh-remote-host
     image: appleboy/drone-ssh
     settings:
       host:
@@ -25,4 +41,8 @@ steps:
       port:
         from_secret: SSH_REMOTE_PORT
       script:
-        - cat /root/drone_rsa
+        - cd ~/projects/language-repository
+        # rename docker-compose-remote.yml to docker-compose.yml
+        - mv docker-compose-remote.yml docker-compose.yml
+        # up
+        - docker compose up -d
