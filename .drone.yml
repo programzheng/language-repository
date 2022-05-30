@@ -27,7 +27,7 @@
   #       from_secret: SSH_REMOTE_PORT
   #     script:
   #       - cat /root/drone_rsa
----
+# ---
 kind: pipeline
 type: ssh
 name: linux_amd64
