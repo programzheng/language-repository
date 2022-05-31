@@ -133,3 +133,7 @@ steps:
   #     script:
   #       # up
   #       - docker compose up -d
+
+trigger:
+  branch:
+    - feature-drone
