@@ -2,47 +2,134 @@ kind: pipeline
 type: docker
 name: default
 
-steps:    
-  - name: push-linux-amd64-image
-    image: plugins/docker
-    settings:
-      repo: programzheng/${DRONE_REPO_NAME}
-      dockerfile: Dockerfile
-      username:
-        from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
-      password:
-        from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
+steps:
+  - name: show environment
+    image: golang
+    commands:
+      - echo "DRONE_BUILD_ACTION = ${DRONE_BUILD_ACTION}"
+      - echo "DRONE_BUILD_CREATED = ${DRONE_BUILD_CREATED}"
+      - echo "DRONE_BUILD_EVENT = ${DRONE_BUILD_EVENT}"
+      - echo "DRONE_BUILD_FINISHED = ${DRONE_BUILD_FINISHED}"
+      - echo "DRONE_BUILD_NUMBER = ${DRONE_BUILD_NUMBER}"
+      - echo "DRONE_BUILD_PARENT = ${DRONE_BUILD_PARENT}"
+      - echo "DRONE_BUILD_STARTED = ${DRONE_BUILD_STARTED}"
+      - echo "DRONE_BUILD_STATUS = ${DRONE_BUILD_STATUS}"
+      - echo "DRONE_COMMIT = ${DRONE_COMMIT}"
+      - echo "DRONE_COMMIT_AFTER = ${DRONE_COMMIT_AFTER}"
+      - echo "DRONE_COMMIT_AUTHOR = ${DRONE_COMMIT_AUTHOR}"
+      - echo "DRONE_COMMIT_AUTHOR_AVATAR = ${DRONE_COMMIT_AUTHOR_AVATAR}"
+      - echo "DRONE_COMMIT_AUTHOR_EMAIL = ${DRONE_COMMIT_AUTHOR_EMAIL}"
+      - echo "DRONE_COMMIT_AUTHOR_NAME = ${DRONE_COMMIT_AUTHOR_NAME}"
+      - echo "DRONE_COMMIT_BEFORE = ${DRONE_COMMIT_BEFORE}"
+      - echo "DRONE_COMMIT_BRANCH = ${DRONE_COMMIT_BRANCH}"
+      - echo "DRONE_COMMIT_LINK = ${DRONE_COMMIT_LINK}"
+      - echo "DRONE_COMMIT_MESSAGE = ${DRONE_COMMIT_MESSAGE}"
+      - echo "DRONE_COMMIT_REF = ${DRONE_COMMIT_REF}"
+      - echo "DRONE_COMMIT_SHA = ${DRONE_COMMIT_SHA}"
+      - echo "DRONE_DEPLOY_TO = ${DRONE_DEPLOY_TO}"
+      - echo "DRONE_FAILED_STAGES = ${DRONE_FAILED_STAGES}"
+      - echo "DRONE_FAILED_STEPS = ${DRONE_FAILED_STEPS}"
+      - echo "DRONE_GIT_HTTP_URL = ${DRONE_GIT_HTTP_URL}"
+      - echo "DRONE_GIT_SSH_URL = ${DRONE_GIT_SSH_URL}"
+      - echo "DRONE_PULL_REQUEST = ${DRONE_PULL_REQUEST}"
+      - echo "DRONE_REMOTE_URL = ${DRONE_REMOTE_URL}"
+      - echo "DRONE_REPO = ${DRONE_REPO}"
+      - echo "DRONE_REPO_BRANCH = ${DRONE_REPO_BRANCH}"
+      - echo "DRONE_REPO_LINK = ${DRONE_REPO_LINK}"
+      - echo "DRONE_REPO_NAME = ${DRONE_REPO_NAME}"
+      - echo "DRONE_REPO_NAMESPACE = ${DRONE_REPO_NAMESPACE}"
+      - echo "DRONE_REPO_OWNER = ${DRONE_REPO_OWNER}"
+      - echo "DRONE_REPO_PRIVATE = ${DRONE_REPO_PRIVATE}"
+      - echo "DRONE_REPO_SCM = ${DRONE_REPO_SCM}"
+      - echo "DRONE_REPO_VISIBILITY = ${DRONE_REPO_VISIBILITY}"
+      - echo "DRONE_SEMVER = ${DRONE_SEMVER}"
+      - echo "DRONE_SEMVER_BUILD = {DRONE_SEMVER_BUILD}"
+      - echo "DRONE_SEMVER_ERROR = ${DRONE_SEMVER_ERROR}"
+      - echo "DRONE_SEMVER_MAJOR = ${DRONE_SEMVER_MAJOR}"
+      - echo "DRONE_SEMVER_MINOR = ${DRONE_SEMVER_MINOR}"
+      - echo "DRONE_SEMVER_PATCH = ${DRONE_SEMVER_PATCH}"
+      - echo "DRONE_SEMVER_PRERELEASE = ${DRONE_SEMVER_PRERELEASE}"
+      - echo "DRONE_SEMVER_SHORT = ${DRONE_SEMVER_SHORT}"
+      - echo "DRONE_SOURCE_BRANCH = ${DRONE_SOURCE_BRANCH}"
+      - echo "DRONE_STAGE_ARCH = ${DRONE_STAGE_ARCH}"
+      - echo "DRONE_STAGE_DEPENDS_ON = ${DRONE_STAGE_DEPENDS_ON}"
+      - echo "DRONE_STAGE_FINISHED = ${DRONE_STAGE_FINISHED}"
+      - echo "DRONE_STAGE_KIND = ${DRONE_STAGE_KIND}"
+      - echo "DRONE_STAGE_MACHINE = ${DRONE_STAGE_MACHINE}"
+      - echo "DRONE_STAGE_NAME = ${DRONE_STAGE_NAME}"
+      - echo "DRONE_STAGE_NUMBER = ${DRONE_STAGE_NUMBER}"
+      - echo "DRONE_STAGE_OS = ${DRONE_STAGE_OS}"
+      - echo "DRONE_STAGE_STARTED = ${DRONE_STAGE_STARTED}"
+      - echo "DRONE_STAGE_STATUS = ${DRONE_STAGE_STATUS}"
+      - echo "DRONE_STAGE_TYPE = ${DRONE_STAGE_TYPE}"
+      - echo "DRONE_STAGE_VARIANT = ${DRONE_STAGE_VARIANT}"
+      - echo "DRONE_STEP_NAME = ${DRONE_STEP_NAME}"
+      - echo "DRONE_STEP_NUMBER = ${DRONE_STEP_NUMBER}"
+      - echo "DRONE_SYSTEM_HOST = ${DRONE_SYSTEM_HOST}"
+      - echo "DRONE_SYSTEM_HOSTNAME = ${DRONE_SYSTEM_HOSTNAME}"
+      - echo "DRONE_SYSTEM_PROTO = ${DRONE_SYSTEM_PROTO}"
+      - echo "DRONE_SYSTEM_VERSION = ${DRONE_SYSTEM_VERSION}"
+      - echo "DRONE_TAG = ${DRONE_TAG}"
+      - echo "DRONE_TARGET_BRANCH = ${DRONE_TARGET_BRANCH}"
 
-  - name: scp-remote-host
-    image: appleboy/drone-scp
+  # - name: push-linux-amd64-image
+  #   image: plugins/docker
+  #   settings:
+  #     repo: programzheng/${DRONE_REPO_NAME}
+  #     dockerfile: Dockerfile
+  #     username:
+  #       from_secret: PUSH_LINUX_AMD64_IMAGE_USERNAME
+  #     password:
+  #       from_secret: PUSH_LINUX_AMD64_IMAGE_PASSWORD
+
+  - name: rsync-reomte-host
+    image: drillster/drone-rsync
     settings:
-      host:
+      debug: true
+      hosts:
         from_secret: SSH_REMOTE_HOST
-      username:
+      user:
         from_secret: SSH_REMOTE_USERNAME
       key:
         from_secret: SSH_REMOTE_KEY
       port:
         from_secret: SSH_REMOTE_PORT
-      overwrite: true
+      source: .
       target: ~/projects/language-repository
-      source:
-        - docker-compose-remote.yml
-
-  - name: ssh-remote-host
-    image: appleboy/drone-ssh
-    settings:
-      host:
-        from_secret: SSH_REMOTE_HOST
-      username:
-        from_secret: SSH_REMOTE_USERNAME
-      key:
-        from_secret: SSH_REMOTE_KEY
-      port:
-        from_secret: SSH_REMOTE_PORT
+      exclude: [ "*" ]
+      include: [ "docker-compose-remote.yml" ]
       script:
-        - cd ~/projects/language-repository
-        # rename docker-compose-remote.yml to docker-compose.yml
-        - mv docker-compose-remote.yml docker-compose.yml
-        # up
-        - docker compose up -d
+        - go version
+        # - cd ~/projects/language-repository
+        # - mv docker-compose-remote.yml docker-compose.yml
+
+  # - name: scp-remote-host
+  #   image: appleboy/drone-scp
+  #   settings:
+  #     host:
+  #       from_secret: SSH_REMOTE_HOST
+  #     username:
+  #       from_secret: SSH_REMOTE_USERNAME
+  #     key:
+  #       from_secret: SSH_REMOTE_KEY
+  #     port:
+  #       from_secret: SSH_REMOTE_PORT
+  #     overwrite: true
+  #     target: ~/projects/language-repository
+  #     source:
+  #       - docker-compose-remote.yml
+
+  # - name: ssh-remote-host
+  #   image: appleboy/drone-ssh
+  #   settings:
+  #     host:
+  #       from_secret: SSH_REMOTE_HOST
+  #     username:
+  #       from_secret: SSH_REMOTE_USERNAME
+  #     key:
+  #       from_secret: SSH_REMOTE_KEY
+  #     port:
+  #       from_secret: SSH_REMOTE_PORT
+  #     script:
+  #       # up
+  #       - docker compose up -d
