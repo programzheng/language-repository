@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"log"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -24,6 +26,8 @@ import (
 var (
 	_, b, _, _ = runtime.Caller(0)
 	basepath   = filepath.Dir(b)
+	//go:embed dist
+	dist embed.FS
 )
 
 func autoMigrate() {
@@ -92,7 +96,7 @@ func main() {
 	orm.InitDatabase()
 	go autoMigrate()
 
-	engine := html.New("./dist", ".html")
+	engine := html.NewFileSystem(http.FS(dist), ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
@@ -106,7 +110,9 @@ func main() {
 	app.Use(getCors())
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(fiber.StatusOK).SendString("ok")
+		return c.Render("dist/index", fiber.Map{
+			"Title": "ok",
+		})
 	})
 
 	apiGroup := app.Group("/api")
