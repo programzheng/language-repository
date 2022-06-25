@@ -1,6 +1,9 @@
-.vscode
+.vscode/
+
+.secrets
+*.secrets
 
 *.secrets
 
 .env
-logs
+logs/

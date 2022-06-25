@@ -1,3 +1,8 @@
+#讀取.env
+include ./.env
+export $(shell sed 's/=.*//' ./.env)
+
+NAME=language-repository
 #當前年-月-日
 DATE=$(shell date +"%F")
 COMPOSE=docker-compose
@@ -12,6 +17,14 @@ bash:
 dev:
 	$(COMPOSE) build $(SERVICES)
 	$(COMPOSE) up $(SERVICES)
+
+#test
+test:
+	go test -v .
+
+#build_linux_amd64
+build_linux_amd64:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -a -o release/linux/amd64/${NAME}
 
 #啟動服務
 up:
