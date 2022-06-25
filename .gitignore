@@ -1,6 +1,7 @@
 .vscode/
 
 .secrets
+*.secrets
 
 .env
 logs/
