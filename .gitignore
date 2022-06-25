@@ -1,4 +1,6 @@
-.vscode
+.vscode/
+
+.secrets
 
 .env
-logs
+logs/
